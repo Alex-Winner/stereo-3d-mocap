@@ -3,7 +3,7 @@
 ## Overview
 This repository contains the implementation of a stereo motion capture system designed to accurately track and record 3D human motion in real-time. The project leverages Google's MediaPipe for robust feature detection and tracking, and implements the Direct Linear Transform (DLT) algorithm for the triangulation of 2D camera pixels into 3D space coordinates.
 
-![](vis_open3d\vis_camera.png)
+![](images/vis_camera.png)
 
 [Youtube](https://youtu.be/LWCxKxISCeY)
 
@@ -27,13 +27,13 @@ cd Mocap3D
 pip install -r requirements.txt
 ```
 
-3. Set up your stereo camera system according to the instructions in the `camera_setup.md` file.
+3. Set up your stereo camera system according to the instructions in the [camera_setup.md](/docs/camera_setup.md) file.
 
 ## Usage
 
 1. Calibration
 Before using the system, ensure that the stereo cameras are properly calibrated. <br>
-Follow the detailed calibration instructions provided in [calibration_instructions](docs\calibration_instructions.md).
+Follow the detailed calibration instructions provided in [calibration_instructions.md](/docs/calibration_instructions.md).
 
 2. Run mocap software:
 Run the script with live cameras using camera IDs
