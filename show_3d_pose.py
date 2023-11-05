@@ -285,8 +285,6 @@ def visualize_open3d(kpts_3d_face, kpts_3d_left_hand, kpts_3d_right_hand, kpts_3
             vis.destroy_window()
             break
 
-        
-
 
 # ROI bounding box 
 def boundPolyCreate(ROI) -> list:        # Create bounding box points

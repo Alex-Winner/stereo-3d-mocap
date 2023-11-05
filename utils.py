@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import linalg
 
 
 def _make_homogeneous_rep_matrix(R, t):
@@ -8,25 +9,46 @@ def _make_homogeneous_rep_matrix(R, t):
     P[3,3] = 1
     return P
 
-#direct linear transform
-def DLT(P1, P2, point1, point2):
+def triangulate_point(P1, P2, point1, point2):
+    """
+    Triangulate a 3D point from two camera projection matrices and corresponding image coordinates.
 
-    A = [point1[1]*P1[2,:] - P1[1,:],
-         P1[0,:] - point1[0]*P1[2,:],
-         point2[1]*P2[2,:] - P2[1,:],
-         P2[0,:] - point2[0]*P2[2,:]
-        ]
-    A = np.array(A).reshape((4,4))
-    #print('A: ')
-    #print(A)
+    Parameters:
+        P1 (numpy.ndarray): The 3x4 projection matrix for the first camera.
+        P2 (numpy.ndarray): The 3x4 projection matrix for the second camera.
+        point1 (numpy.ndarray): Pixel coordinates (x, y) of a feature point in the first image.
+        point2 (numpy.ndarray): Pixel coordinates (x, y) of the same feature point in the second image.
 
+    Returns:
+        numpy.ndarray: The triangulated 3D coordinates of the feature point in world coordinates.
+
+    This function takes two projection matrices (P1 and P2) and their corresponding image coordinates (point1 and point2).
+    It calculates the 3D coordinates of a feature point in the world by triangulating the projections from both cameras.
+
+    The projection matrices P1 and P2 should be 3x4 matrices that represent the camera's projection transformation.
+    The input points point1 and point2 are 2D pixel coordinates specifying the location of the feature in the images.
+    The returned 3D point is represented as a numpy array (x, y, z) in world coordinates.
+    """
+    # Construct matrix A for linear system of equations
+    A = [
+        point1[1] * P1[2, :] - P1[1, :],
+        P1[0, :] - point1[0] * P1[2, :],
+        point2[1] * P2[2, :] - P2[1, :],
+        P2[0, :] - point2[0] * P2[2, :]
+    ]
+    A = np.array(A).reshape((4, 4))
+
+    # Calculate matrix B from A
     B = A.transpose() @ A
-    from scipy import linalg
-    U, s, Vh = linalg.svd(B, full_matrices = False)
 
-    #print('Triangulated point: ')
-    #print(Vh[3,0:3]/Vh[3,3])
-    return Vh[3,0:3]/Vh[3,3]
+    # Perform Singular Value Decomposition (SVD) on matrix B
+    U, s, Vh = linalg.svd(B, full_matrices=False)
+
+    # Triangulate the 3D point by dividing the last row of Vh by its last element
+    triangulated_point = Vh[3, 0:3] / Vh[3, 3]
+
+    return triangulated_point
+
 
 def read_camera_parameters(camera_id):
 

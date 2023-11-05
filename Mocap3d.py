@@ -1,7 +1,7 @@
 import cv2 as cv
 import mediapipe as mp
 import numpy as np
-from utils import DLT, get_projection_matrix, write_keypoints_to_disk
+from utils import triangulate_point, get_projection_matrix, write_keypoints_to_disk
 
 
 class Mocap3D:
@@ -324,7 +324,7 @@ class Mocap3D:
             if uv1[0] == -1 or uv2[0] == -1:
                 _p3d = [-1, -1, -1]
             else:
-                _p3d = DLT(P0, P1, uv1, uv2)  # calculate 3d position of keypoint
+                _p3d = triangulate_point(P0, P1, uv1, uv2)  # calculate 3d position of keypoint
             frame_p3ds.append(_p3d)
 
         frame_p3ds = np.array(frame_p3ds).reshape((len(keypoints), 3))
@@ -655,20 +655,18 @@ class Mocap3D:
 
 
 if __name__ == "__main__":
-
+    import sys
     #POSE = ["head", "upper_body", "left_hand", "right_hand", "lower_body"]
     POSE = ["upper_body", "lower_body"]
     #POSE = []
     mocap = Mocap3D(pose=POSE, hands=True, face=True)
 
-    """
     # put camera id as command line arguements
     if len(sys.argv) == 3:
         input_stream1 = int(sys.argv[1])
         input_stream2 = int(sys.argv[2])
     else:
         exit()
-    """
 
     # this will load the sample videos if no camera ID is given
     input_stream1 = "media\camera_0.avi"
